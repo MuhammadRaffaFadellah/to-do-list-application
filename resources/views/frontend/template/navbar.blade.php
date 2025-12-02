@@ -9,11 +9,11 @@
 
             <!-- Dropdown Menu -->
             <div id="profileMenu" class="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-md my-2 hidden">
-                <a href="" class="block px-4 py-2 hover:bg-gray-100">
+                <a href="" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">
                     <i class="fa-solid fa-user me-2"></i>
                     <span>Profile</span>
                 </a>
-                <a href="#logout" class=" block px-4 py-2 hover:bg-gray-100">
+                <a href="#logout" class=" block px-4 py-2 hover:bg-gray-100 rounded-b-md">
                     <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>
                     <span>Logout</span>
                 </a>
