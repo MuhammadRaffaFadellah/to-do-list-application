@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->boolean('status')->default(0); 
             $table->date('due_date')->nullable();
-            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade')->onUpdate('cascade');
+            $table->integer('is_important')->default(0);
             $table->timestamps();
         });
     }

@@ -7,4 +7,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/main', [TaskController::class, "index"])->name('menu.index');
+Route::get('/dashboard', [TaskController::class, "index"])->name('menu.index');
