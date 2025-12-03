@@ -3,15 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use app\Models\Task;
+use App\Models\Task;
 
-class Category extends Model
+class Status extends Model
 {
     protected $fillable = [
         'name',
     ];
 
-    protected $table = 'categories';
+    protected $table = 'statuses';
 
     public function tasks() {
         return $this->hasMany(Task::class);

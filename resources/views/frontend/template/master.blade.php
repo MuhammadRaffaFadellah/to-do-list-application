@@ -18,7 +18,7 @@
     <!-- Navbar -->
     @include('frontend.template.navbar')
 
-    <div class="flex pt-20">
+    <div class="flex pt-20 h-screen">
         <!-- Sidebar -->
         @include('frontend.template.sidebar')
 

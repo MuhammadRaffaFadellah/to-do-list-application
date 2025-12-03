@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Category;
+use App\Models\Status;
+use App\Models\Important;
 
 class Task extends Model
 {
@@ -12,12 +13,16 @@ class Task extends Model
         'description',
         'due_date',
         'is_important',
-        'status',
+        'status_id',
     ];
 
     protected $table = 'tasks';
 
-    public function category() {
-        return $this->belongsTo(Category::class);
+    public function status() {
+        return $this->belongsTo(Status::class, 'status_id');
+    }
+
+    public function important(){
+        return $this->belongsTo(Important::class, 'is_important');
     }
 }

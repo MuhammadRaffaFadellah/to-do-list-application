@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\Status;
+use App\Models\Important;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -12,7 +14,11 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return view('frontend.dashboard');
+        $tasks = Task::with(['status', 'important'])->get();
+        $statuses = Status::all();
+        $importants = Important::all();
+
+        return view('frontend.dashboard', compact(['tasks', 'statuses', 'importants']));
     }
 
     /**
