@@ -111,7 +111,7 @@
                         aria-label="Close form">✕</button>
                 </div>
 
-                <form id="addTaskForm" method="POST" action="" novalidate>
+                <form id="addTaskForm" method="POST" action="{{ route('tasks.store') }}" novalidate>
                     @csrf
 
                     <div class="mb-3">
@@ -125,53 +125,53 @@
                         <textarea name="description" rows="3" class="w-full mt-1 p-2 border border-gray-200 rounded-md"></textarea>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <label class="block text-gray-700 font-medium text-sm">Status</label>
-                            <select name="status_id"
-                                class="w-full mt-1 p-2 border border-gray-200 rounded-md bg-gray-100 cursor-not-allowed"
-                                disabled>
-                                @foreach ($statuses as $status)
-                                    <option value="{{ $status->id }}" @if (strtolower($status->name) === 'in progress') selected @endif>
-                                        {{ $status->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium text-sm">Due Date</label>
+                        <input type="datetime-local" name="due_date"
+                            class="w-full mt-1 p-2 border border-gray-200 rounded-md">
+                    </div>
 
-                            <!-- VALUE ASLI tetap dikirim ke controller -->
-                            <input type="hidden" name="status_id"
-                                value="{{ $statuses->firstWhere('name', 'In Progress')->id ?? 1 }}">
-                        </div>
-
-                        <div>
-                            <label class="block text-gray-700 font-medium text-sm text-end">Important?</label>
-                            <div class="flex items-center justify-end gap-6 mt-3 w-full">
-                                @foreach ($importants as $important)
-                                    <label for="" class="flex items-center gap-2">
-                                        <input type="radio" name="is_important" value="{{ $important->id }}"
-                                            class="h-4 w-4 text-green-600 focus:ring-green-500"
-                                            @if ($loop->first) checked @endif>
-                                        <span class="text-gray-700 text-sm">
-                                            {{ $important->name }}
-                                        </span>
-                                    </label>
-                                @endforeach
-                            </div>
+                    <div class="mb-7">
+                        <label class="block text-gray-700 font-medium text-sm">Important?</label>
+                        <div class="flex items-center gap-6 mt-3 w-full">
+                            @foreach ($importants as $important)
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="is_important" value="{{ $important->id }}"
+                                        class="h-4 w-4 text-green-600 focus:ring-green-500"
+                                        @if ($loop->first) checked @endif>
+                                    <span class="text-gray-700 text-sm">
+                                        {{ $important->name }}
+                                    </span>
+                                </label>
+                            @endforeach
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-medium text-sm">Due Date</label>
-                        <input type="date" name="due_date" class="w-full mt-1 p-2 border border-gray-200 rounded-md">
+                    <div class="hidden">
+                        <label class="block text-gray-700 font-medium text-sm">Status</label>
+                        <select name="status_id"
+                            class="w-full mt-1 p-2 border border-gray-200 rounded-md bg-gray-100 cursor-not-allowed"
+                            disabled>
+                            @foreach ($statuses as $status)
+                                <option value="{{ $status->id }}" @if (strtolower($status->name) === 'in progress') selected @endif>
+                                    {{ $status->name }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <!-- VALUE ASLI tetap dikirim ke controller -->
+                        <input type="hidden" name="status_id"
+                            value="{{ $statuses->firstWhere('name', 'In Progress')->id ?? 1 }}">
                     </div>
 
                     <div class="flex gap-3">
                         <button type="button" id="cancelBtn"
-                            class="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition">Cancel
+                            class="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                            Cancel
                         </button>
                         <button type="submit"
-                            class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">Add
-                            Task
+                            class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
+                            Add Task
                         </button>
                     </div>
                 </form>
