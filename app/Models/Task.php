@@ -16,6 +16,10 @@ class Task extends Model
         'status_id',
     ];
 
+    protected $casts = [
+        'due_date' => 'datetime',
+    ];
+
     protected $table = 'tasks';
 
     public function status() {

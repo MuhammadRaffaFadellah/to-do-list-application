@@ -33,7 +33,6 @@
 
     <!-- Card / List for tasks -->
     <div class="bg-white p-6 rounded-lg shadow-md h-full">
-
         @if ($tasks->isEmpty())
             <div class="p-6 text-center text-gray-500 flex flex-col items-center justify-center h-full">
                 <i class="fa-regular fa-circle-xmark text-5xl mb-3"></i>
@@ -42,45 +41,69 @@
         @else
             <div class="space-y-4">
                 @foreach ($tasks as $task)
-                    <div
-                        class="border p-4 rounded-lg shadow-sm hover:shadow-md transition bg-white flex justify-between items-start">
+                    <div class="relative border p-4 rounded-lg shadow-sm hover:shadow-md transition bg-white">
 
-                        <div>
+                        <!-- HEADER: title (left) + status (right) -->
+                        <div class="flex items-center justify-between pr-12"> <!-- pr untuk ruang bintang -->
                             <h3 class="text-lg font-semibold text-gray-800">
                                 {{ $task->title }}
                             </h3>
 
-                            <p class="text-gray-600 text-sm mt-1">
-                                {{ $task->description ?: 'No description' }}
-                            </p>
+                            @if ($task->status)
+                                <span class="ml-4 px-3 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">
+                                    {{ $task->status->name }}
+                                </span>
+                            @else
+                                <span class="ml-4 px-3 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">
+                                    No Status
+                                </span>
+                            @endif
+                        </div>
 
-                            <p class="text-gray-500 text-xs mt-2 flex items-center gap-2">
-                                <i class="fa-regular fa-clock"></i>
+                        <!-- star di pojok kanan atas (sejajar dengan header) -->
+                        @if ($task->important)
+                            <i class="fa-solid fa-star text-yellow-300 text-lg absolute top-4 right-4"></i>
+                        @endif
+
+                        <!-- Description -->
+                        <p class="text-gray-600 text-sm mt-3">
+                            {{ $task->description ?: 'No description' }}
+                        </p>
+
+                        <!-- Due Date bar (beri padding-right supaya menu tidak overlap) -->
+                        <div class="mt-3 flex items-center gap-2 pr-12">
+                            <i class="fa-regular fa-clock text-gray-400"></i>
+                            <p class="text-gray-500 text-xs">
                                 Due:
                                 <span class="font-medium">
-                                    {{ $task->due_date ? $task->due_date : 'No due date' }}
+                                    {{ $task->due_date ? $task->due_date->format('d M Y - H:i') : 'No due date' }}
                                 </span>
                             </p>
                         </div>
 
-                        <div class="flex flex-col items-end gap-2">
-                            <!-- Important -->
-                            @if ($task->important)
-                                <span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full">
-                                    Important
-                                </span>
-                            @endif
+                        <!-- Menu (titik tiga) di pojok kanan bawah, sejajar dengan due date -->
+                        <div x-data="{ open: false }" class="absolute bottom-3 right-3">
+                            <button @click="open = !open" class="px-2 py-1 rounded-lg hover:bg-gray-100 transition">
+                                <i class="fa-solid fa-ellipsis-vertical text-gray-500"></i>
+                            </button>
 
-                            <!-- Status -->
-                            @if ($task->status)
-                                <span class="px-2 py-1 text-xs bg-green-100 text-green-600 rounded-full">
-                                    {{ $task->status->name }}
-                                </span>
-                            @else
-                                <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full">
-                                    No Status
-                                </span>
-                            @endif
+                            <div x-cloak x-show="open" @click.outside="open = false" x-transition.opacity.origin.top.right
+                                class="mt-2 w-36 bg-white border border-gray-200 shadow-lg rounded-xl overflow-hidden z-20">
+                                <a href=""
+                                    class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                    Edit
+                                </a>
+
+                                <form action="" method="POST"
+                                    onsubmit="return confirm('Delete this task?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
                         </div>
 
                     </div>
@@ -88,7 +111,6 @@
             </div>
         @endif
     </div>
-
 
     <!-- Backdrop  -->
     <div id="backdrop"

@@ -12,6 +12,10 @@
 
     <!-- Vite CSS and JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Alpine.js CDN -->
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
 </head>
 
 <body class="bg-gray-100">
