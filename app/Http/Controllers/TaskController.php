@@ -37,10 +37,13 @@ class TaskController extends Controller
         $validated = $request->validate([
             'title'         => 'required|string|max:255',
             'description'   => 'nullable|string',
-            'due_date'      => 'nullable|datetime',
+            'due_date'      => 'nullable|date',
             'is_important'  => 'required',
             'status_id'     => 'required',
         ]);
+
+        $validated['is_important'] = ($validated['is_important'] == '1') ? 1 : 2;
+
         Task::create($validated);
         return redirect()->back()->with('success', 'Task created successfully.');
     }

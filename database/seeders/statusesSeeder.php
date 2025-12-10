@@ -14,7 +14,7 @@ class statusesSeeder extends Seeder
     {
         DB::table('statuses')->insert([
             [
-                'name'  => 'Not Completed',
+                'name'  => 'Expired',
             ],
             [
                 'name'  => 'In Progress',

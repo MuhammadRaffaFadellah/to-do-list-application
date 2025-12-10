@@ -5,7 +5,7 @@
 @section('main-content')
     <!-- Floating Add Button -->
     <button id="showFormBtn"
-        class="fixed bottom-10 right-10 bg-green-600 text-white w-14 h-14 rounded-full shadow-lg 
+        class="fixed bottom-0 right-0 bg-green-600 text-white w-14 h-14 rounded-s-sm rounded-t-sm shadow-lg 
         flex items-center justify-center text-3xl hover:bg-green-700 transition z-50 cursor-pointer"
         aria-expanded="false" aria-controls="taskFormCard" aria-label="Add task">
         <span class="mb-2">
@@ -16,7 +16,7 @@
     <!-- Notifcation / Flash message -->
     @if (session('success') || session('error'))
         <div id="notif"
-            class="fixed bottom-5 left-5 z-50 px-5 py-3 rounded-lg shadow-lg text-white 
+            class="fixed top-20 right-0 z-50 px-5 py-3 rounded-lg shadow-lg text-white 
             {{ session('success') ? 'bg-green-600' : 'bg-red-600' }}">
             {{ session('success') ?? session('error') }}
         </div>
@@ -31,8 +31,83 @@
         </script>
     @endif
 
-    <!-- Card / List for tasks -->
-    <div class="bg-white p-6 rounded-lg shadow-md h-full">
+    <!-- Card -->
+    <div class="bg-white p-6 rounded-lg shadow-md h-full overflow-auto">
+
+        <!-- Search + Filter Dropdown (Modern Minimalist) -->
+        <form method="GET" action="" class="mb-5">
+            <div class="flex items-center gap-3">
+
+                <!-- SEARCH BAR -->
+                <div class="flex-1">
+                    <div class="relative">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search tasks..."
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring focus:ring-blue-200 focus:outline-none">
+                        <i class="fa-solid fa-magnifying-glass text-gray-400 absolute right-3 top-3"></i>
+                    </div>
+                </div>
+
+                <!-- FILTER DROPDOWN -->
+                <div x-data="{ open: false }" class="relative">
+                    <button type="button" @click="open = !open"
+                        class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition">
+                        <i class="fa-solid fa-filter text-gray-600"></i>
+                    </button>
+
+                    <!-- Dropdown -->
+                    <div x-cloak x-show="open" @click.outside="open = false" x-transition
+                        class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg p-4 space-y-3 z-50">
+
+                        <!-- FILTER: Status -->
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600">Status</label>
+                            <select name="status_id"
+                                class="mt-1 w-full border border-gray-300 text-sm px-2 py-1 rounded-lg focus:ring focus:ring-blue-200">
+                                <option value="">All</option>
+                                @foreach ($statuses as $status)
+                                    <option value="{{ $status->id }}"
+                                        {{ request('status_id') == $status->id ? 'selected' : '' }}>
+                                        {{ ucfirst($status->name) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- FILTER: Importance -->
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600">Importance</label>
+                            <select name="is_important"
+                                class="mt-1 w-full border border-gray-300 text-sm px-2 py-1 rounded-lg focus:ring focus:ring-blue-200">
+                                <option value="">All</option>
+                                <option value="2" {{ request('is_important') == 2 ? 'selected' : '' }}>Important ★
+                                </option>
+                                <option value="1" {{ request('is_important') == 1 ? 'selected' : '' }}>Normal</option>
+                            </select>
+                        </div>
+
+                        <!-- FILTER: Due Date -->
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600">Due</label>
+                            <select name="due"
+                                class="mt-1 w-full border border-gray-300 text-sm px-2 py-1 rounded-lg focus:ring focus:ring-blue-200">
+                                <option value="">All</option>
+                                <option value="overdue" {{ request('due') == 'overdue' ? 'selected' : '' }}>Overdue</option>
+                                <option value="today" {{ request('due') == 'today' ? 'selected' : '' }}>Today</option>
+                                <option value="future" {{ request('due') == 'future' ? 'selected' : '' }}>Upcoming</option>
+                            </select>
+                        </div>
+
+                        <!-- APPLY BUTTON -->
+                        <button class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm hover:bg-blue-700 transition">
+                            Apply
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- If empty -->
         @if ($tasks->isEmpty())
             <div class="p-6 text-center text-gray-500 flex flex-col items-center justify-center h-full">
                 <i class="fa-regular fa-circle-xmark text-5xl mb-3"></i>
@@ -41,27 +116,32 @@
         @else
             <div class="space-y-4">
                 @foreach ($tasks as $task)
-                    <div class="relative border p-4 rounded-lg shadow-sm hover:shadow-md transition bg-white">
+                    <div class="relative p-4 my-3 rounded-lg shadow-md hover:shadow-xl transition bg-white pr-12">
 
-                        <!-- HEADER: title (left) + status (right) -->
-                        <div class="flex items-center justify-between pr-12"> <!-- pr untuk ruang bintang -->
+                        <!-- Header -->
+                        <div class="flex items-center gap-3">
                             <h3 class="text-lg font-semibold text-gray-800">
                                 {{ $task->title }}
                             </h3>
 
                             @if ($task->status)
-                                <span class="ml-4 px-3 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">
+                                <span
+                                    class="px-3 py-1 text-xs font-semibold rounded-full
+                                @if ($task->status->name == 'expired') bg-red-100 text-red-700
+                                @elseif ($task->status->name == 'in progress') bg-blue-100 text-blue-700
+                                @elseif ($task->status->name == 'completed') bg-green-100 text-green-700
+                                @else bg-gray-100 text-gray-700 @endif">
                                     {{ $task->status->name }}
                                 </span>
                             @else
-                                <span class="ml-4 px-3 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">
+                                <span class="px-3 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">
                                     No Status
                                 </span>
                             @endif
                         </div>
 
-                        <!-- star di pojok kanan atas (sejajar dengan header) -->
-                        @if ($task->important)
+                        <!-- Important -->
+                        @if ($task->is_important == 2)
                             <i class="fa-solid fa-star text-yellow-300 text-lg absolute top-4 right-4"></i>
                         @endif
 
@@ -70,8 +150,8 @@
                             {{ $task->description ?: 'No description' }}
                         </p>
 
-                        <!-- Due Date bar (beri padding-right supaya menu tidak overlap) -->
-                        <div class="mt-3 flex items-center gap-2 pr-12">
+                        <!-- Due date -->
+                        <div class="mt-3 flex items-center gap-2">
                             <i class="fa-regular fa-clock text-gray-400"></i>
                             <p class="text-gray-500 text-xs">
                                 Due:
@@ -81,26 +161,25 @@
                             </p>
                         </div>
 
-                        <!-- Menu (titik tiga) di pojok kanan bawah, sejajar dengan due date -->
+                        <!-- Menu -->
                         <div x-data="{ open: false }" class="absolute bottom-3 right-3">
                             <button @click="open = !open" class="px-2 py-1 rounded-lg hover:bg-gray-100 transition">
                                 <i class="fa-solid fa-ellipsis-vertical text-gray-500"></i>
                             </button>
 
-                            <div x-cloak x-show="open" @click.outside="open = false" x-transition.opacity.origin.top.right
-                                class="mt-2 w-36 bg-white border border-gray-200 shadow-lg rounded-xl overflow-hidden z-20">
+                            <div x-cloak x-show="open" @click.outside="open = false"
+                                class="absolute right-0 bottom-12 z-50 w-40 bg-white border border-gray-200 shadow-lg rounded-lg overflow-hidden">
                                 <a href=""
-                                    class="block px-4 py-2 text-sm hover:bg-gray-100">
-                                    Edit
+                                    class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-50">
+                                    Edit <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
 
-                                <form action="" method="POST"
-                                    onsubmit="return confirm('Delete this task?')">
+                                <form action="" method="POST" onsubmit="return confirm('Delete this task?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
-                                        class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                        Delete
+                                        class="w-full flex items-center justify-between px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                        Delete <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
                             </div>
@@ -111,6 +190,7 @@
             </div>
         @endif
     </div>
+
 
     <!-- Backdrop  -->
     <div id="backdrop"
@@ -133,9 +213,8 @@
                         aria-label="Close form">✕</button>
                 </div>
 
-                <form id="addTaskForm" method="POST" action="{{ route('tasks.store') }}" novalidate>
+                <form id="addTaskForm" method="POST" action="{{ route('tasks.store') }}">
                     @csrf
-
                     <div class="mb-3">
                         <label class="block text-gray-700 font-medium text-sm">Title</label>
                         <input type="text" name="title" required
